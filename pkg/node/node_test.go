@@ -1,42 +1,35 @@
 package node_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/aronluigi/axon/pkg/node"
+	"github.com/google/uuid"
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func NodeTest(a string, b int, c *testing.T) (string, int, *testing.T, error) {
-	return a, b, c, nil
-}
-
 type Input struct {
+	LastName  *string
 	FirstName string
-	LastName  string
-	T         *testing.T
+	UUID      uuid.UUID
 }
 
-type Out struct {
+type Output struct {
 	Test string
+}
+
+func HandlerDummy(input Input) (Output, error) {
+	return Output{Test: input.FirstName}, nil
 }
 
 func TestNode(t *testing.T) {
 	Convey("node creation", t, func() {
-		node, err := node.NewNode(func(in Input) (Out, error) {
-			a, _, _, err := NodeTest(in.FirstName, 10, t)
-			if err != nil {
-				return Out{}, err
-			}
-
-			return Out{Test: a}, nil
-		}, Input{}, Out{})
-
+		node, err := node.NewNode(HandlerDummy, Input{}, Output{})
 		So(err, ShouldBeNil)
-		fmt.Println(node, "------------")
+		So(node.InputTypes["UUID"], ShouldHaveSameTypeAs, uuid.UUID)
 
-		_, err = node.Process(Input{FirstName: "test"})
+		r, err := node.Process(Input{FirstName: "test"})
 		So(err, ShouldBeNil)
+		So(r, ShouldHaveSameTypeAs, Output{})
 	})
 }

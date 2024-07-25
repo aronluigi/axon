@@ -4,46 +4,36 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
+
+	"github.com/google/uuid"
 )
 
-type NodeInterface interface {
-	Process(in any) (out any, err error)
-}
-
 type Node struct {
-	Function         func(any) (any, error)
-	Input            any
-	InputDefinition  NodeIODef
-	Output           any
-	OutputDefinition NodeIODef
+	UUID        uuid.UUID
+	Function    func(any) (any, error)
+	Input       any
+	InputTypes  map[string]reflect.Type
+	Output      any
+	OutputTypes map[string]reflect.Type
 }
 
-type NodeIODef struct {
-	Fields map[string]string
-	Type   string
-}
-
-func getIODefinition(obj any) (NodeIODef, error) {
-	def := NodeIODef{}
+func getIODefinition(obj any) (map[string]reflect.Type, error) {
 	instanceType := reflect.TypeOf(obj)
+	fields := make(map[string]reflect.Type)
 
 	if instanceType.Kind() == reflect.Pointer {
-		return def, errors.New("input/output can't be a pointer")
+		return fields, errors.New("input/output can't be a pointer")
 	}
 
-	fields := make(map[string]string)
 	for i := 0; i < instanceType.NumField(); i++ {
 		field := instanceType.Field(i)
-		fields[field.Name] = field.Type.String()
+		fields[field.Name] = field.Type
 	}
 
-	def.Type = instanceType.Name()
-	def.Fields = fields
-
-	return def, nil
+	return fields, nil
 }
 
-func NewNode[T any, K any](fn func(T) (K, error), input T, output K) (NodeInterface, error) {
+func NewNode[T any, K any](fn func(T) (K, error), input T, output K) (*Node, error) {
 	wrapper := func(in any) (any, error) {
 		if v, ok := (in).(T); ok {
 			return fn(v)
@@ -62,12 +52,18 @@ func NewNode[T any, K any](fn func(T) (K, error), input T, output K) (NodeInterf
 		return nil, fmt.Errorf("output definition: getIODefinition: %w", err)
 	}
 
+	uid, err := uuid.NewV7()
+	if err != nil {
+		return nil, fmt.Errorf("UUID: %w", err)
+	}
+
 	node := &Node{
-		Function:         wrapper,
-		Input:            input,
-		InputDefinition:  inputDef,
-		Output:           output,
-		OutputDefinition: outputDef,
+		UUID:        uid,
+		Function:    wrapper,
+		Input:       input,
+		InputTypes:  inputDef,
+		Output:      output,
+		OutputTypes: outputDef,
 	}
 
 	return node, nil
