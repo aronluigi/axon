@@ -1,6 +1,7 @@
 package node_test
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/aronluigi/axon/pkg/node"
@@ -26,7 +27,7 @@ func TestNode(t *testing.T) {
 	Convey("node creation", t, func() {
 		node, err := node.NewNode(HandlerDummy, Input{}, Output{})
 		So(err, ShouldBeNil)
-		So(node.InputTypes["UUID"], ShouldHaveSameTypeAs, uuid.UUID)
+		So(node.InputTypes["UUID"], ShouldEqual, reflect.TypeOf(uuid.New()))
 
 		r, err := node.Process(Input{FirstName: "test"})
 		So(err, ShouldBeNil)

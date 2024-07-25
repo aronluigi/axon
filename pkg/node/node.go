@@ -9,12 +9,12 @@ import (
 )
 
 type Node struct {
-	UUID        uuid.UUID
-	Function    func(any) (any, error)
 	Input       any
-	InputTypes  map[string]reflect.Type
 	Output      any
+	Function    func(any) (any, error)
+	InputTypes  map[string]reflect.Type
 	OutputTypes map[string]reflect.Type
+	UUID        uuid.UUID
 }
 
 func getIODefinition(obj any) (map[string]reflect.Type, error) {
