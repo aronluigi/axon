@@ -7,49 +7,61 @@ import (
 	"github.com/google/uuid"
 )
 
+type GraphNodeConnection struct {
+	FromNode *node.Node
+	FromPort string
+	ToNode   *node.Node
+	ToPort   string
+}
+
 type Graph struct {
 	Nodes       map[uuid.UUID]*node.Node
-	Connections []*Connection
+	Connections []*GraphNodeConnection
 }
 
 func NewGraph() GraphInterface {
 	return &Graph{
 		Nodes:       make(map[uuid.UUID]*node.Node),
-		Connections: []*Connection{},
+		Connections: []*GraphNodeConnection{},
 	}
 }
 
 type GraphInterface interface {
 	AddNode(*node.Node)
-	AddConnection(*Connection) error
+	AddConnection(fromNode *node.Node, fromPort string, toNode *node.Node, toPort string) error
 }
 
 func (o *Graph) AddNode(n *node.Node) {
 	o.Nodes[n.UUID] = n
 }
 
-func (o *Graph) AddConnection(con *Connection) error {
-	if con.FromNode.UUID == con.ToNode.UUID {
-		return fmt.Errorf("FromNode [%s] is the same as ToNode", con.FromNode.UUID.String())
+func (o *Graph) AddConnection(fromNode *node.Node, fromPort string, toNode *node.Node, toPort string) error {
+	if fromNode.UUID == toNode.UUID {
+		return fmt.Errorf("FromNode [%s] is the same as ToNode", fromNode.UUID.String())
 	}
 
-	if _, ok := o.Nodes[con.FromNode.UUID]; !ok {
-		return fmt.Errorf("FromNode [%s] is not present in the graph", con.FromNode.UUID.String())
+	if _, ok := o.Nodes[fromNode.UUID]; !ok {
+		return fmt.Errorf("FromNode [%s] is not present in the graph", fromNode.UUID.String())
 	}
 
-	if _, ok := o.Nodes[con.ToNode.UUID]; !ok {
-		return fmt.Errorf("ToNode [%s] is not present in the graph", con.ToNode.UUID.String())
+	if _, ok := o.Nodes[toNode.UUID]; !ok {
+		return fmt.Errorf("ToNode [%s] is not present in the graph", toNode.UUID.String())
 	}
 
-	if _, ok := o.Nodes[con.FromNode.UUID].OutputTypes[con.FromPort]; !ok {
-		return fmt.Errorf("FromPort field [%s] is not present in FromNode OutputTypes", con.FromPort)
+	if _, ok := o.Nodes[fromNode.UUID].OutputTypes[fromPort]; !ok {
+		return fmt.Errorf("FromPort field [%s] is not present in FromNode OutputTypes", fromPort)
 	}
 
-	if _, ok := o.Nodes[con.ToNode.UUID].InputTypes[con.ToPort]; !ok {
-		return fmt.Errorf("ToPort field [%s] is not present in ToNode InputTypes", con.ToPort)
+	if _, ok := o.Nodes[toNode.UUID].InputTypes[toPort]; !ok {
+		return fmt.Errorf("ToPort field [%s] is not present in ToNode InputTypes", toPort)
 	}
 
-	o.Connections = append(o.Connections, con)
+	o.Connections = append(o.Connections, &GraphNodeConnection{
+		FromNode: fromNode,
+		ToNode:   toNode,
+		FromPort: fromPort,
+		ToPort:   toPort,
+	})
 
 	return nil
 }

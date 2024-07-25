@@ -36,24 +36,24 @@ func TestNode(t *testing.T) {
 
 		Convey("add connection", func() {
 			Convey("positive", func() {
-				err := g.AddConnection(graph.NewConnection(node_a, "Test", node_b, "FirstName"))
+				err := g.AddConnection(node_a, "Test", node_b, "FirstName")
 				So(err, ShouldBeNil)
 			})
 
 			Convey("negative", func() {
 				Convey("node missing from graph", func() {
-					err := g.AddConnection(graph.NewConnection(node_a, "Test", node_c, "FirstName"))
+					err := g.AddConnection(node_a, "Test", node_c, "FirstName")
 					So(err, ShouldBeError)
 					So(err.Error(), ShouldContainSubstring, "not present")
 				})
 				Convey("same input output node", func() {
-					err := g.AddConnection(graph.NewConnection(node_a, "Test", node_a, "FirstName"))
+					err := g.AddConnection(node_a, "Test", node_a, "FirstName")
 					So(err, ShouldBeError)
 				})
 				Convey("missing field", func() {
-					err := g.AddConnection(graph.NewConnection(node_a, "Test", node_b, "FirstNameA"))
+					err := g.AddConnection(node_a, "Test", node_b, "FirstNameA")
 					So(err, ShouldBeError)
-					err = g.AddConnection(graph.NewConnection(node_a, "TestA", node_b, "FirstName"))
+					err = g.AddConnection(node_a, "TestA", node_b, "FirstName")
 					So(err, ShouldBeError)
 				})
 			})
