@@ -23,16 +23,17 @@ func HandlerDummy(input Input) (Output, error) {
 
 func TestNode(t *testing.T) {
 	Convey("Graph", t, func() {
-		node_a, err := node.NewNode(HandlerDummy, Input{}, Output{})
+		node_a, err := node.NewNode("", "", HandlerDummy, Input{}, Output{})
 		So(err, ShouldBeNil)
-		node_b, err := node.NewNode(HandlerDummy, Input{}, Output{})
+		node_b, err := node.NewNode("", "", HandlerDummy, Input{}, Output{})
 		So(err, ShouldBeNil)
-		node_c, err := node.NewNode(HandlerDummy, Input{}, Output{})
+		node_c, err := node.NewNode("", "", HandlerDummy, Input{}, Output{})
+		So(err, ShouldBeNil)
+		node_d, err := node.NewNode("", "", HandlerDummy, Input{}, Output{})
 		So(err, ShouldBeNil)
 
 		g := graph.NewGraph()
-		g.AddNode(node_a)
-		g.AddNode(node_b)
+		g.AddNode(node_a, node_b)
 
 		Convey("add connection", func() {
 			Convey("positive", func() {
@@ -57,6 +58,17 @@ func TestNode(t *testing.T) {
 					So(err, ShouldBeError)
 				})
 			})
+		})
+
+		Convey("execution", func() {
+			g = graph.NewGraph()
+			g.AddNode(node_a, node_b, node_c, node_d)
+			err := g.AddConnection(node_a, "Test", node_b, "FirstName")
+			So(err, ShouldBeNil)
+			err = g.AddConnection(node_a, "Test", node_c, "FirstName")
+			So(err, ShouldBeNil)
+			err = g.AddConnection(node_b, "Test", node_c, "FirstName")
+			So(err, ShouldBeNil)
 		})
 	})
 }

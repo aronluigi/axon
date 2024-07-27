@@ -14,6 +14,8 @@ type Node struct {
 	Function    func(any) (any, error)
 	InputTypes  map[string]reflect.Type
 	OutputTypes map[string]reflect.Type
+	DisplayName string `json:"displayName"`
+	PackageName string `json:"packageName"`
 	UUID        uuid.UUID
 }
 
@@ -33,7 +35,7 @@ func getIODefinition(obj any) (map[string]reflect.Type, error) {
 	return fields, nil
 }
 
-func NewNode[T any, K any](fn func(T) (K, error), input T, output K) (*Node, error) {
+func NewNode[T any, K any](displayName string, packageName string, fn func(T) (K, error), input T, output K) (*Node, error) {
 	wrapper := func(in any) (any, error) {
 		if v, ok := (in).(T); ok {
 			return fn(v)
@@ -64,6 +66,8 @@ func NewNode[T any, K any](fn func(T) (K, error), input T, output K) (*Node, err
 		InputTypes:  inputDef,
 		Output:      output,
 		OutputTypes: outputDef,
+		DisplayName: displayName,
+		PackageName: packageName,
 	}
 
 	return node, nil

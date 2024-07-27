@@ -27,12 +27,18 @@ func NewGraph() GraphInterface {
 }
 
 type GraphInterface interface {
-	AddNode(*node.Node)
+	AddNode(...*node.Node)
 	AddConnection(fromNode *node.Node, fromPort string, toNode *node.Node, toPort string) error
 }
 
-func (o *Graph) AddNode(n *node.Node) {
-	o.Nodes[n.UUID] = n
+func (o *Graph) AddNode(nodes ...*node.Node) {
+	for _, node := range nodes {
+		if _, ok := o.Nodes[node.UUID]; ok {
+			continue
+		}
+
+		o.Nodes[node.UUID] = node
+	}
 }
 
 func (o *Graph) AddConnection(fromNode *node.Node, fromPort string, toNode *node.Node, toPort string) error {
@@ -63,8 +69,17 @@ func (o *Graph) AddConnection(fromNode *node.Node, fromPort string, toNode *node
 		ToPort:   toPort,
 	})
 
+	o.createTree()
 	return nil
 }
 
 func (o *Graph) Execute() {
+}
+
+func (o *Graph) createTree() {
+	fmt.Println("---------")
+	fmt.Println(len(o.Connections))
+	for _, node := range o.Connections {
+		fmt.Println(node)
+	}
 }

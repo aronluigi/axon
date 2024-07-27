@@ -25,7 +25,7 @@ func HandlerDummy(input Input) (Output, error) {
 
 func TestNode(t *testing.T) {
 	Convey("node creation", t, func() {
-		node, err := node.NewNode(HandlerDummy, Input{}, Output{})
+		node, err := node.NewNode("", "", HandlerDummy, Input{}, Output{})
 		So(err, ShouldBeNil)
 		So(node.InputTypes["UUID"], ShouldEqual, reflect.TypeOf(uuid.New()))
 

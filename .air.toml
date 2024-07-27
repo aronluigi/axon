@@ -4,10 +4,12 @@ tmp_dir = ".tmp/air"
 
 [build]
 args_bin = []
-bin = "/usr/bin/true"
-cmd = "go test -v --cover ./..."
+bin = "axon"
+pre_cmd = ["go test -v --cover ./..."]
+cmd = "go build -o axon ./axon.go"
+post_cmd = []
 delay = 1000
-exclude_dir = [".git", "vendor"]
+exclude_dir = [".git", "vendor", "gui"]
 exclude_regex = []
 exclude_unchanged = false
 follow_symlink = false
@@ -18,8 +20,6 @@ kill_delay = "0s"
 log = "build-errors.log"
 poll = false
 poll_interval = 0
-post_cmd = []
-pre_cmd = []
 rerun = false
 rerun_delay = 500
 send_interrupt = false

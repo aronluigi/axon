@@ -1,0 +1,11 @@
+type Node {
+  displayName: String!
+  packageName: String!
+}
+
+type Query {
+  """
+  Get all aviable nodes
+  """
+  nodes: [Node!]!
+}
