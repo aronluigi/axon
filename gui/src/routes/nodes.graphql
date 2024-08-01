@@ -1,0 +1,18 @@
+fragment NodePortSummary on Port {
+  name
+  type
+  pkgPath
+}
+
+query FetchAvailableNodes {
+  nodes {
+    displayName
+    packageName
+    inputPorts {
+      ...NodePortSummary
+    }
+    outputPorts {
+      ...NodePortSummary
+    }
+  }
+}

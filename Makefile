@@ -13,3 +13,6 @@ format: ## Format source code
 
 watch: ## Start dev watch
 	@air
+
+codegen: ## Run code generation for entire project
+	@make -C ./pkg/gql codegen

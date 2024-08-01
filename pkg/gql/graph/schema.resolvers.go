@@ -17,10 +17,7 @@ func (r *queryResolver) Nodes(ctx context.Context) ([]*model.Node, error) {
 	defaultNodes := r.DefaultNodes
 
 	for _, n := range defaultNodes {
-		res = append(res, &model.Node{
-			DisplayName: n.DisplayName,
-			PackageName: n.PackageName,
-		})
+		res = append(res, nodeToModel(*n))
 	}
 
 	return res, nil

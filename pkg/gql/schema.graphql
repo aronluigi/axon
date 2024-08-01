@@ -1,11 +1,19 @@
+type Port {
+  name: String!
+  type: String!
+  pkgPath: String!
+}
+
 type Node {
   displayName: String!
   packageName: String!
+  inputPorts: [Port!]!
+  outputPorts: [Port!]!
 }
 
 type Query {
   """
-  Get all aviable nodes
+  Get all available nodes
   """
   nodes: [Node!]!
 }
