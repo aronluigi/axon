@@ -1,8 +1,7 @@
 import { availableNodes, nodesStore } from "$lib";
-import { useSvelteFlow, type XYPosition } from "@xyflow/svelte"
 import { type Node } from '@xyflow/svelte';
-import { getContext } from "svelte";
 import { get } from "svelte/store";
+import { UpdateFlowState, type InputMaybe, type InputNode, type InputPort, type UpdateFlowStateNodesParam } from "../generated/graphql";
 
 const dataTransferFormat: string = 'axon/flow'
 
@@ -49,5 +48,32 @@ export const onNodeDrop = (screenToFlowPosition: any) => (event: DragEvent) => {
     data: an[uuid]
   }
 
-  nodesStore.update((n) => [...n, newNode])
+  const state = get(nodesStore)
+  state.push(newNode)
+
+  const pl = state.map(x => ({
+    id: x.id,
+    position: x.position,
+    type: x.type,
+    data: {
+      uuid: x.data.uuid,
+      displayName: x.data.label,
+      packageName: x.data.package,
+      inputPorts: x.data.inPorts as InputPort[],
+      outputPorts: x.data.outPorts as InputPort[],
+    } as InputNode
+  } as UpdateFlowStateNodesParam))
+  console.log(pl)
+  UpdateFlowState({ variables: { nodes: pl } })
+    .then(r => {
+      if (r.errors) {
+        console.log(r.errors)
+        return
+      }
+
+      nodesStore.set(state)
+    })
+    .catch(e => {
+      throw new Error(e)
+    })
 }

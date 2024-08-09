@@ -4,10 +4,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/aronluigi/axon/pkg/gql/graph"
 	"github.com/aronluigi/axon/pkg/gql/graph/generated"
+	"github.com/aronluigi/axon/pkg/state"
 	"github.com/gorilla/websocket"
 	"github.com/rs/cors"
 
@@ -23,7 +25,16 @@ func StartServer(port int) {
 		AllowCredentials: true,
 	})
 
-	resolver := graph.NewResolver()
+	dir, err := os.Getwd()
+	if err != nil {
+		panic(err)
+	}
+
+	stateFile := fmt.Sprintf("%s/state.json", dir)
+	fmt.Println("Saving state to: ", stateFile)
+	stateService := state.NewState(stateFile)
+
+	resolver := graph.NewResolver(stateService)
 	config := generated.Config{Resolvers: resolver}
 
 	srv := handler.New(generated.NewExecutableSchema(config))

@@ -4,6 +4,26 @@ fragment NodePortSummary on Port {
   pkgPath
 }
 
+fragment NodeSummary on FlowStateNode {
+  id
+  type
+  position {
+    x
+    y
+  }
+  data {
+    uuid
+    displayName
+    packageName
+    inputPorts {
+      ...NodePortSummary
+    }
+    outputPorts {
+      ...NodePortSummary
+    }
+  }
+}
+
 query FetchAvailableNodes {
   nodes {
     uuid
@@ -15,5 +35,11 @@ query FetchAvailableNodes {
     outputPorts {
       ...NodePortSummary
     }
+  }
+}
+
+mutation UpdateFlowState ($nodes: [updateFlowStateNodesParam]!) {
+  updateFlowState(nodes: $nodes) {
+    ...NodeSummary
   }
 }

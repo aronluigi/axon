@@ -3,6 +3,7 @@ package graph
 import (
 	"github.com/aronluigi/axon/pkg/extras"
 	"github.com/aronluigi/axon/pkg/node"
+	"github.com/aronluigi/axon/pkg/state"
 )
 
 // This file will not be regenerated automatically.
@@ -11,10 +12,12 @@ import (
 
 type Resolver struct {
 	DefaultNodes []*node.Node
+	StateService *state.State
 }
 
-func NewResolver() *Resolver {
+func NewResolver(stateService *state.State) *Resolver {
 	return &Resolver{
 		DefaultNodes: extras.GetNods(),
+		StateService: stateService,
 	}
 }

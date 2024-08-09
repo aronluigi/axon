@@ -1,4 +1,13 @@
+scalar Void
+scalar UUID
+
 type Port {
+  name: String!
+  type: String!
+  pkgPath: String!
+}
+
+input InputPort {
   name: String!
   type: String!
   pkgPath: String!
@@ -12,9 +21,48 @@ type Node {
   outputPorts: [Port!]!
 }
 
+input InputNode {
+  uuid: UUID!
+  displayName: String!
+  packageName: String!
+  inputPorts: [InputPort!]!
+  outputPorts: [InputPort!]!
+}
+
+type FlowNodePosition {
+  x: Int!
+  y: Int!
+}
+
+input InputFlowNodePosition {
+  x: Int!
+  y: Int!
+}
+
+type FlowStateNode {
+  id: String!
+  type: String!
+  position: FlowNodePosition!
+  data: Node!
+}
+
+input updateFlowStateNodesParam {
+  id: String!
+  type: String!
+  position: InputFlowNodePosition!
+  data: InputNode!
+}
+
 type Query {
   """
   Get all available nodes
   """
   nodes: [Node!]!
+}
+
+type Mutation {
+  """
+  Update Flow State
+  """
+  updateFlowState(nodes: [updateFlowStateNodesParam]!): [FlowStateNode]
 }

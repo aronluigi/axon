@@ -6,10 +6,50 @@ package graph
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aronluigi/axon/pkg/gql/graph/generated"
 	"github.com/aronluigi/axon/pkg/gql/graph/model"
+	"github.com/aronluigi/axon/pkg/state"
 )
+
+// UpdateFlowState is the resolver for the updateFlowState field.
+func (r *mutationResolver) UpdateFlowState(ctx context.Context, nodes []*model.UpdateFlowStateNodesParam) ([]*model.FlowStateNode, error) {
+	var pl []*state.Node
+
+	for _, n := range nodes {
+		var ip []state.NodePort
+		var op []state.NodePort
+
+		for _, nip := range n.Data.InputPorts {
+			ip = append(ip, state.NodePort(*nip))
+		}
+
+		for _, nop := range n.Data.OutputPorts {
+			op = append(op, state.NodePort(*nop))
+		}
+
+		pl = append(pl, &state.Node{
+			ID:       n.ID,
+			Type:     n.Type,
+			Position: state.NodePosition(*n.Position),
+			Data: state.NodeData{
+				UUID:        n.Data.UUID,
+				DisplayName: n.Data.DisplayName,
+				PackageName: n.Data.PackageName,
+				InputPorts:  ip,
+				OutputPorts: op,
+			},
+		})
+	}
+
+	err := r.StateService.Update(ctx, pl, "")
+	if err != nil {
+		return []*model.FlowStateNode{}, fmt.Errorf("StateService.Update: %w", err)
+	}
+
+	return stateNodesToResp(pl), nil
+}
 
 // Nodes is the resolver for the nodes field.
 func (r *queryResolver) Nodes(ctx context.Context) ([]*model.Node, error) {
@@ -23,7 +63,11 @@ func (r *queryResolver) Nodes(ctx context.Context) ([]*model.Node, error) {
 	return res, nil
 }
 
+// Mutation returns generated.MutationResolver implementation.
+func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
+type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
