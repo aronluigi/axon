@@ -9,6 +9,7 @@ type Input struct {
 	LastName  *string
 	FirstName string
 	UUID      uuid.UUID
+	Test      []string
 }
 
 type Output struct {

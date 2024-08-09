@@ -14,9 +14,9 @@ type Node struct {
 	Function    func(any) (any, error)
 	InputTypes  map[string]reflect.Type
 	OutputTypes map[string]reflect.Type
-	DisplayName string `json:"displayName"`
-	PackageName string `json:"packageName"`
-	UUID        uuid.UUID
+	DisplayName string    `json:"displayName"`
+	PackageName string    `json:"packageName"`
+	UUID        uuid.UUID `json:"uuid"`
 }
 
 func getIODefinition(obj any) (map[string]reflect.Type, error) {
@@ -35,7 +35,7 @@ func getIODefinition(obj any) (map[string]reflect.Type, error) {
 	return fields, nil
 }
 
-func NewNode[T any, K any](displayName string, packageName string, fn func(T) (K, error), input T, output K) (*Node, error) {
+func NewNode[T any, K any](displayName, packageName string, fn func(T) (K, error), input T, output K) (*Node, error) {
 	wrapper := func(in any) (any, error) {
 		if v, ok := (in).(T); ok {
 			return fn(v)
@@ -54,10 +54,7 @@ func NewNode[T any, K any](displayName string, packageName string, fn func(T) (K
 		return nil, fmt.Errorf("output definition: getIODefinition: %w", err)
 	}
 
-	uid, err := uuid.NewV7()
-	if err != nil {
-		return nil, fmt.Errorf("UUID: %w", err)
-	}
+	uid := uuid.NewSHA1(uuid.NameSpaceX500, []byte(displayName+"-"+packageName))
 
 	node := &Node{
 		UUID:        uid,

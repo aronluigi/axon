@@ -6,6 +6,7 @@ fragment NodePortSummary on Port {
 
 query FetchAvailableNodes {
   nodes {
+    uuid
     displayName
     packageName
     inputPorts {

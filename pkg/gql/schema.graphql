@@ -5,6 +5,7 @@ type Port {
 }
 
 type Node {
+  uuid: String!
   displayName: String!
   packageName: String!
   inputPorts: [Port!]!

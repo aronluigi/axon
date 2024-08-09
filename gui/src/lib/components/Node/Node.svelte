@@ -1,7 +1,17 @@
 <script lang="ts">
 	import { type NodeProps } from '@xyflow/svelte';
 	import { Handle } from '$lib';
-	import { PortType, type Node } from '$lib/types';
+	import { PortType, type NodePort } from '$lib';
+
+	type Node = {
+		data: {
+			uuid: string;
+			label: string;
+			package: string;
+			inPorts: NodePort[];
+			outPorts: NodePort[];
+		};
+	};
 
 	type $$Props = NodeProps & Node;
 	export let data: $$Props['data'];
@@ -12,7 +22,7 @@
 	// export let deletable: $$Props['deletable'] = true;
 	// export let dragging: boolean = false;
 	// export let type: $$Props['type'] = 'default';
-	export let sourcePosition: $$Props['sourcePosition'] = undefined;
+	// export let sourcePosition: $$Props['sourcePosition'] = undefined;
 	// export let targetPosition: $$Props['targetPosition'] = undefined;
 	// export let zIndex: $$Props['zIndex'];
 	// export let width: $$Props['width'] = undefined;

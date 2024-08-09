@@ -16,3 +16,4 @@ watch: ## Start dev watch
 
 codegen: ## Run code generation for entire project
 	@make -C ./pkg/gql codegen
+	@make -C ./gui codegen

@@ -7,8 +7,9 @@ import (
 	"github.com/aronluigi/axon/pkg/node"
 )
 
-func nodeToModel(n node.Node) *model.Node {
+func nodeToModel(n *node.Node) *model.Node {
 	return &model.Node{
+		UUID:        n.UUID.String(),
 		DisplayName: n.DisplayName,
 		PackageName: n.PackageName,
 		InputPorts:  getNodePortsToModel(n.InputTypes),
