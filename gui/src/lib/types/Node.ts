@@ -11,3 +11,5 @@ export type NodeObj = {
   inPorts: NodePort[]
   outPorts: NodePort[]
 }
+
+export type NodeList = { [uuid: string]: NodeObj }

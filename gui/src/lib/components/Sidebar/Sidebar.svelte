@@ -1,8 +1,12 @@
 <script lang="ts">
 	import { type NodeObj } from '$lib/types';
 
-	export let nodes: NodeObj[];
-	export let onDragStart: (e: DragEvent, uuid: string) => void;
+	interface Props {
+		nodes: NodeObj[];
+		onDragStart(e: DragEvent, uuid: string): void;
+	}
+
+	let { nodes, onDragStart }: Props = $props();
 </script>
 
 <aside class="sidebar text-sm border-r-gray-800 border-r-4 text-white p-2">
@@ -16,10 +20,12 @@
 			class="text-sm ml-4 w-full bg-transparent focus:outline-none"
 		/>
 	</div>
-	{#each nodes as node}
+	{#each nodes as node, i}
 		<div
+			role="menuitem"
+			tabindex={i}
 			draggable={true}
-			on:dragstart={(event) => onDragStart(event, node.uuid)}
+			ondragstart={(event) => onDragStart(event, node.uuid)}
 			class="p-2.5 mt-3 flex items-center rounded-md px-4 duration-300 bg-gray-900 cursor-pointer hover:bg-gray-800"
 		>
 			<svg

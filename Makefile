@@ -6,7 +6,8 @@ help: ## Show this help.
 install: ## install utils
 	@go install github.com/air-verse/air@latest
 	@go install golang.org/x/tools/go/analysis/passes/fieldalignment/cmd/fieldalignment@latest
-	@asdf reshimer golang
+	@asdf reshim golang
+	@go mod tidy
 
 format: ## Format source code
 	fieldalignment -fix ./pkg/...

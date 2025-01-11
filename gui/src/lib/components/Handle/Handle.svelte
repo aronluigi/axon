@@ -2,8 +2,12 @@
 	import { Handle, Position } from '@xyflow/svelte';
 	import { PortType } from '$lib/types';
 
-	export let portType: PortType;
-	export let id: string;
+	interface Props {
+		portType: PortType;
+		id: string;
+	}
+
+	let { portType, id }: Props = $props();
 
 	const position = portType === PortType.in ? Position.Left : Position.Right;
 	const handleType = portType === PortType.in ? 'target' : 'source';
@@ -19,5 +23,5 @@
 </script>
 
 <div class={`relative inline-block w-5 h-5 rounded-full ${portColor}`}>
-	<Handle type={handleType} {position} {style} {id} />
+	<Handle type={handleType} {position} {style} {id} isConnectable={true} />
 </div>

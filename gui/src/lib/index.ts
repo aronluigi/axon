@@ -8,5 +8,5 @@ export * from '$lib/store'
 
 // types
 export { PortType } from '$lib/types/Port'
-export type { NodeObj, NodePort } from '$lib/types/Node'
+export type { NodeObj, NodePort, NodeList } from '$lib/types/Node'
 
